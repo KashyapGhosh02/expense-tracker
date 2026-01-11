@@ -1,0 +1,48 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: expense_tracker
+          POSTGRES_USER: expense_user
+          POSTGRES_PASSWORD: Test4321
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Backend startup check
+        env:
+          DATABASE_URL: postgresql://expense_user:Test4321@localhost:5432/expense_tracker
+          SECRET_KEY: testsecret
+        run: |
+          cd backend
+          python -c "import app"
