@@ -1,3 +1,5 @@
+import token
+from urllib import response
 from fastapi import FastAPI, Depends, HTTPException, Response, Body
 from sqlalchemy.orm import Session
 from sqlalchemy import extract, func
@@ -16,10 +18,15 @@ app = FastAPI(title="Expense Tracker API")
 # ------------------------
 # CORS (REQUIRED FOR COOKIES)
 # ------------------------
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=[
+        "http://localhost:3000",          # local dev
+        "https://expense-tracker-inky-delta-53.vercel.app"  # 🔴 VERCEL URL
+    ],
+    allow_credentials=True,  # 🔴 REQUIRED for cookies
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -79,12 +86,13 @@ def login(
     token = create_access_token({"sub": str(db_user.id)})
 
     response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        samesite="lax"
+    key="access_token",
+    value=token,
+    httponly=True,
+    secure=True,      # 🔴 REQUIRED for HTTPS (Render + Vercel)
+    samesite="none",  # 🔴 REQUIRED for cross-domain cookies
+    max_age=3600 * 24  # 1 day
     )
-
     return {"message": "Login successful"}
 
 # =========================================================
