@@ -1,12 +1,12 @@
 def test_create_and_get_expense(client):
     client.post(
         "/auth/register",
-        json={"username": "expuser", "password": "exp123"},
+        json={"username": "expuser", "password": "Test@1234"},
     )
 
     client.post(
         "/auth/login",
-        json={"username": "expuser", "password": "exp123"},
+        json={"username": "expuser", "password": "Test@1234"},
     )
 
     create_res = client.post(

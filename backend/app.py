@@ -54,15 +54,19 @@ def register(
     user: schemas.UserCreate = Body(...),
     db: Session = Depends(get_db)
 ):
+    username = user.username.strip().lower()
     existing = db.query(models.User).filter(
-        models.User.username == user.username
+        models.User.username == username
     ).first()
 
     if existing:
-        raise HTTPException(status_code=400, detail="Username already exists")
+        raise HTTPException(
+            status_code=400,
+            detail="Username already exists"
+        )
 
     new_user = models.User(
-        username=user.username,
+        username=username,
         password=hash_password(user.password)
     )
 
@@ -78,8 +82,10 @@ def login(
     response: Response,
     db: Session = Depends(get_db)
 ):
+    username = user.username.strip().lower()
+
     db_user = db.query(models.User).filter(
-        models.User.username == user.username
+        models.User.username == username
     ).first()
 
     if not db_user or not verify_password(user.password, db_user.password):
