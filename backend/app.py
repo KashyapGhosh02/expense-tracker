@@ -9,9 +9,11 @@ from database import engine, get_db
 import models, schemas
 from auth import hash_password, verify_password, create_access_token
 from dependencies import get_current_user
+import os
+
 
 models.Base.metadata.create_all(bind=engine)
-
+IS_PRODUCTION = os.getenv("ENV") == "production"
 
 app = FastAPI(title="Expense Tracker API")
 
@@ -86,12 +88,11 @@ def login(
     token = create_access_token({"sub": str(db_user.id)})
 
     response.set_cookie(
-    key="access_token",
-    value=token,
-    httponly=True,
-    secure=True,      # 🔴 REQUIRED for HTTPS (Render + Vercel)
-    samesite="none",  # 🔴 REQUIRED for cross-domain cookies
-    max_age=3600 * 24  # 1 day
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=IS_PRODUCTION,  # 🔴 HTTPS only in prod
+        samesite="none" if IS_PRODUCTION else "lax",
     )
     return {"message": "Login successful"}
 

@@ -43,6 +43,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://expense_user:Test4321@localhost:5432/expense_tracker
           SECRET_KEY: testsecret
+          ENV: test
         run: |
           cd backend
           pytest
