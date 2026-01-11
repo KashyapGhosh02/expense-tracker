@@ -39,10 +39,11 @@ jobs:
           cd backend
           pip install -r requirements.txt
 
-      - name: Backend startup check
-        env:
-          DATABASE_URL: postgresql://expense_user:Test4321@localhost:5432/expense_tracker
-          SECRET_KEY: testsecret
-        run: |
-          cd backend
-          python -c "import app"
+- name: Run tests
+  env:
+    DATABASE_URL: postgresql://expense_user:Test4321@localhost:5432/expense_tracker
+    SECRET_KEY: testsecret
+  run: |
+    cd backend
+    pytest
+
