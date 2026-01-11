@@ -46,3 +46,7 @@ jobs:
         run: |
           cd backend
           pytest
+
+      - name: Build backend Docker image
+        run: |
+          docker build -t expense-backend ./backend
