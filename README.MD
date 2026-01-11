@@ -63,3 +63,23 @@ A **full-stack expense tracking application** built with **FastAPI, PostgreSQL, 
 
 ## 📂 Project Structure
 
+Expense_Tracker/
+│
+├── backend/
+│ ├── app.py
+│ ├── auth.py
+│ ├── database.py
+│ ├── models.py
+│ ├── schemas.py
+│ ├── dependencies.py
+│ ├── requirements.txt
+│ └── Dockerfile
+│
+├── frontend/
+│ ├── src/
+│ ├── public/
+│ └── package.json
+│
+├── docker-compose.yml
+├── .gitignore
+└── README.md
