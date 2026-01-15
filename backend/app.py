@@ -4,11 +4,11 @@ from fastapi import FastAPI, Depends, HTTPException, Response, Body
 from sqlalchemy.orm import Session
 from sqlalchemy import extract, func
 from fastapi.middleware.cors import CORSMiddleware
-
+from models import User, Expense
 from database import engine, get_db
 import models, schemas
 from auth import hash_password, verify_password, create_access_token
-from dependencies import get_current_user
+from dependencies import get_admin_user, get_current_user
 import os
 
 
@@ -245,3 +245,26 @@ def get_current_user_info(
     current_user: models.User = Depends(get_current_user)
 ):
     return {"username": current_user.username, "id": current_user.id}
+
+
+# =========================================================
+# ADMINSTRATION ROUTES (PROTECTED)
+# =========================================================
+
+@app.get("/admin/users")
+def get_all_users(
+    db: Session = Depends(get_db),
+    admin: models.User = Depends(get_admin_user)
+):
+    return db.query(models.User).all()
+
+
+
+@app.get("/admin/expenses")
+def get_all_expenses(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_admin_user)
+):
+    return db.query(models.Expense).all()
+
+# implementation of delete user and delete expense by admin later 

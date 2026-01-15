@@ -3,6 +3,7 @@ from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from database import get_db
 import models
+from models import User
 from auth import SECRET_KEY, ALGORITHM
 
 def get_current_user(
@@ -24,3 +25,14 @@ def get_current_user(
         raise HTTPException(status_code=401, detail="User not found")
 
     return user
+
+
+def get_admin_user(
+    current_user:User=Depends(get_current_user)
+):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required"
+        )
+    return current_user
